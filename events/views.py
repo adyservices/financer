@@ -164,7 +164,44 @@ def gallery_operations(request):
 @api_view(['GET','POST','PUT','DELETE'])
 @permission_classes([IsAuthenticated,])
 def activities_operations(request):
-     pass
+    if request.method == 'GET':
+        id = request.GET.get('id',None)
+        event_id = request.GET.get('event',None)
+        if id is not None:
+            activities = Activites.objects.get(id=id)
+            serializer = ActivitesSerializer(activities)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        elif event_id is not None:
+            activities_data = Activites.objects.filter(Q(active=True)&Q(event_id=event_id))
+            serializer = ActivitesSerializer(activities_data,many=True)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        else:
+            return Response("Select activity id",status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "POST":
+        serializer = ActivitesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "PUT":
+        id = request.data.get("id",None)
+        activity_data = Activites.objects.get(id=id)
+        serializer = ActivitesSerializer(activity_data,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "DELETE":
+        id = request.GET.get("id",None)
+        try:
+            activity_data = Activites.objects.get(id=id)
+            activity_data.active = False
+            activity_data.save()
+            return Response("Activity removed successfully",status=status.HTTP_200_OK)
+        except Activites.DoesNotExist:
+            return Response("Some thing went wrong conatct Admin",status=status.HTTP_400_BAD_REQUEST)
 
 
 

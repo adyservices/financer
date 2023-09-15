@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import event_operations,event_members_operations,gallery_operations
+from .views import event_operations,event_members_operations,gallery_operations,activities_operations
 
 
 urlpatterns = [
@@ -17,4 +17,9 @@ urlpatterns = [
     #path('edit_image/', gallery_operations, name='edit_gallery'),
     path('delete_image/', gallery_operations, name='delete_gallery'),
     path('get_images/', gallery_operations, name='get_gallery'),
+
+    path('add_activity/', activities_operations, name='add_activity'),
+    path('edit_activity/', activities_operations, name='edit_activity'),
+    path('delete_activity/', activities_operations, name='delete_activity'),
+    path('get_activities/', activities_operations, name='get_activities'),
 ]
